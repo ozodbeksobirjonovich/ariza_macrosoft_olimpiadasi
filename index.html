@@ -1,0 +1,389 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beruniy Olimpiadasi</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: left;
+        }
+
+        h3 {
+            color: aliceblue !important;
+            margin-left: 20px;
+        }
+
+        label {
+            font-size: 20px;
+            margin-bottom: 0;
+            padding: 0;
+            font-weight: bolder;
+        }
+
+        input {
+            width: 300px;
+            height: 40px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        select {
+            width: 240px !important;
+            height: 40px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+            border-radius: 10px;
+            outline: none;
+            border: 2px inset black;
+        }
+
+        option {
+            font-size: 18px;
+            padding: 0 10px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        body {
+            background-color: var(--tg-theme-bg-color) !important;
+        }
+
+        select:disabled {
+            background-color: #8e8e8e;
+            color: #424242;
+            border: 1px solid #ffffff;
+            cursor: not-allowed;
+        }
+
+        .form {
+            border: 1px solid #9c9c9c;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #3f3f3f;
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="./bootstrap.css">
+</head>
+
+<body>
+    <div class="container">
+        <h3>Macrosoft Olimpiadasiga ro'yxatdan o'tish</h3>
+        <div class="form">
+            <input type="text" id="fullname" class="form-control" placeholder="Ism va familiyangiz">
+            <br>
+            <input type="text" id="phone" value="+998" maxlength="13" minlength="13" class="form-control"
+                placeholder="Telefon raqamingiz">
+            <br>
+            <select id="province" class="form-select">
+                <option value="">Viloyatingizni tanlang</option>
+            </select>
+            <br>
+            <select id="city" class="form-select" disabled>
+                <option value="">Tumanni tanlang</option>
+            </select>
+            <br>
+            <input type="text" id="school" class="form-control" placeholder="Maktabingiz">
+            <br>
+            <input type="number" id="school_class" class="form-control" placeholder="Sinfingiz" min="1" max="11"
+                step="1">
+            <br>
+            <div class="alert alert-danger error" role="alert" style="display: none;"> </div>
+
+            <button id="register" class="btn btn-primary w-100">Ro'yxatdan o'tish</button>
+        </div>
+    </div>
+    <script src="./telegram-web-app.js"></script>
+    <script src="./bootstrap.js"></script>
+    <script>
+        tg = window.Telegram.WebApp
+        tg.expand()
+        regions = {
+            "Toshkent shahri": [
+                "Olmazor tumani",
+                "Bektemir tumani",
+                "Mirobod tumani",
+                "Mirzo-Ulug'bek tumani",
+                "Sergeli tumani",
+                "Shayxontohur tumani",
+                "Yunusobod tumani",
+                "Yakkasaroy tumani",
+                "Chilonzor tumani",
+                "Yashnobod tumani",
+                "Uchtepa tumani"
+            ],
+            "Toshkent viloyati": [
+                "Angren shahri",
+                "Bekobod shahri",
+                "Chinoz tumani",
+                "Oqqo'rg'on tumani",
+                "Ohangaron tumani",
+                "Piskent tumani",
+                "Parkent tumani",
+                "Bo'stonliq tumani",
+                "Bekobod tumani",
+                "Zangiota tumani",
+                "Quyichirchiq tumani",
+                "O'rta Chirchiq tumani",
+                "Yangiyo'l tumani",
+                "Yuqori Chirchiq tumani",
+                "Nurafshon shahri"
+            ],
+            "Namangan viloyati": [
+                "Namangan shahri",
+                "Chortoq tumani",
+                "Kosonsoy tumani",
+                "Mingbuloq tumani",
+                "Namangan tumani",
+                "Norin tumani",
+                "Pop tumani",
+                "To‘raqo‘rg‘on tumani",
+                "Uchqo‘rg‘on tumani",
+                "Uychi tumani",
+                "Yangiqo‘rg‘on tumani"
+            ],
+            "Farg'ona viloyati": [
+                "Farg‘ona shahri",
+                "Beshariq tumani",
+                "Bog‘dod tumani",
+                "Buvayda tumani",
+                "Dang‘ara tumani",
+                "Farg‘ona tumani",
+                "Furqat tumani",
+                "Oltiariq tumani",
+                "Quva tumani",
+                "Quvasoy shahri",
+                "Rishton tumani",
+                "So‘x tumani",
+                "Toshloq tumani",
+                "Uchko‘prik tumani",
+                "Yozyovon tumani"
+            ],
+            "Sirdaryo viloyati": [
+                "Guliston shahri",
+                "Boyovut tumani",
+                "Guliston tumani",
+                "Mirzaobod tumani",
+                "Oqoltin tumani",
+                "Sardoba tumani",
+                "Sayxunobod tumani",
+                "Shirin shahri",
+                "Sirdaryo tumani",
+                "Yangiyer shahri"
+            ],
+            "Xorazm viloyati": [
+                "Urganch shahri",
+                "Bog‘ot tumani",
+                "Gurlan tumani",
+                "Xazorasp tumani",
+                "Xiva tumani",
+                "Xonqa tumani",
+                "Qo‘shko‘pir tumani",
+                "Shovot tumani",
+                "Yangiariq tumani",
+                "Yangibozor tumani"
+            ],
+            "Jizzax viloyati": [
+                "Jizzax shahri",
+                "Arnasoy tumani",
+                "Baxmal tumani",
+                "Do‘stlik tumani",
+                "Forish tumani",
+                "G‘allaorol tumani",
+                "Jizzax tumani",
+                "Mirzacho‘l tumani",
+                "Paxtakor tumani",
+                "Yangiobod tumani",
+                "Zafarobod tumani",
+                "Zarbdor tumani"
+            ],
+            "Surxondaryo viloyati": [
+                "Termiz shahri",
+                "Angor tumani",
+                "Bandixon tumani",
+                "Boysun tumani",
+                "Denov tumani",
+                "Jarqo‘rg‘on tumani",
+                "Muzrabot tumani",
+                "Oltinsoy tumani",
+                "Qiziriq tumani",
+                "Qumqo‘rg‘on tumani",
+                "Sariosiyo tumani",
+                "Sherobod tumani",
+                "Sho‘rchi tumani",
+                "Termiz tumani",
+                "Uzun tumani"
+            ],
+            "Qashqadaryo viloyati": [
+                "Qarshi shahri",
+                "Chiroqchi tumani",
+                "Dehqonobod tumani",
+                "G‘uzor tumani",
+                "Kasbi tumani",
+                "Kitob tumani",
+                "Koson tumani",
+                "Miriqishloq tumani",
+                "Muborak tumani",
+                "Nishon tumani",
+                "Qamashi tumani",
+                "Shahrisabz tumani",
+                "Yakkabog‘ tumani"
+            ],
+            "Navoiy viloyati": [
+                "Navoiy shahri",
+                "Karmana tumani",
+                "Konimex tumani",
+                "Qiziltepa tumani",
+                "Navbahor tumani",
+                "Nurota tumani",
+                "Uchquduq tumani",
+                "Xatirchi tumani",
+                "Zarafshon shahri"
+            ],
+            "Buxoro viloyati": [
+                "Buxoro shahri",
+                "Alat tumani",
+                "Buxoro tumani",
+                "G‘ijduvon tumani",
+                "Jondor tumani",
+                "Kogon shahri",
+                "Kogon tumani",
+                "Olot tumani",
+                "Peshku tumani",
+                "Qorako‘l tumani",
+                "Qorovulbozor tumani",
+                "Romitan tumani",
+                "Shofirkon tumani",
+                "Vobkent tumani"
+            ],
+            "Samarqand viloyati": [
+                "Samarqand shahri",
+                "Bulung‘ur tumani",
+                "Ishtixon tumani",
+                "Jomboy tumani",
+                "Kattaqo‘rg‘on shahri",
+                "Kattaqo‘rg‘on tumani",
+                "Narpay tumani",
+                "Nurobod tumani",
+                "Oqdaryo tumani",
+                "Payariq tumani",
+                "Pastdarg‘om tumani",
+                "Paxtachi tumani",
+                "Qo‘shrabot tumani",
+                "Samarqand tumani",
+                "Toyloq tumani",
+                "Urgut tumani"
+            ],
+            "Andijon viloyati": [
+                "Andijon shahri",
+                "Andijon tumani",
+                "Asaka tumani",
+                "Baliqchi tumani",
+                "Bo‘z tumani",
+                "Buloqboshi tumani",
+                "Izboskan tumani",
+                "Jalaquduq tumani",
+                "Marhamat tumani",
+                "Oltinko‘l tumani",
+                "Paxtaobod tumani",
+                "Qo‘rg‘ontepa tumani",
+                "Shahrixon tumani",
+                "Ulug‘nor tumani",
+                "Xo‘jaobod tumani"
+            ],
+            "Qoraqalpog'iston": [
+                "Nukus shahri",
+                "Amudaryo tumani",
+                "Beruniy tumani",
+                "Chimboy tumani",
+                "Ellikqala tumani",
+                "Kegeyli tumani",
+                "Mo‘ynoq tumani",
+                "Nukus tumani",
+                "Qonliko‘l tumani",
+                "Qorao‘zak tumani",
+                "Shumanay tumani",
+                "Taxiatosh shahri",
+                "Taxtako‘pir tumani",
+                "To‘rtko‘l tumani",
+                "Xo‘jayli tumani"
+            ],
+        }
+
+
+        Object.keys(regions).forEach(province => {
+            const option = document.createElement('option')
+            option.value = province
+            option.textContent = province
+            document.getElementById('province').appendChild(option)
+        })
+        document.getElementById('province').addEventListener('change', function () {
+            const province = this.value
+            console.log(province)
+            if (province || province != "") {
+                document.getElementById('city').removeAttribute('disabled')
+                document.getElementById('city').innerHTML = ''
+                const cities = regions[province]
+                const citySelect = document.getElementById('city')
+                citySelect.innerHTML = ''
+                for (const city of cities) {
+                    const option = document.createElement('option')
+                    option.value = city
+                    option.textContent = city
+                    citySelect.appendChild(option)
+                }
+            } else {
+                document.getElementById('city').setAttribute('disabled', true)
+                document.getElementById('city').innerHTML = ''
+                option = document.createElement('option')
+                option.value = ''
+                option.textContent = 'Tanlang'
+                document.getElementById('city').appendChild(option)
+            }
+        })
+
+        document.getElementById('register').addEventListener('click', function () {
+            document.querySelector('.error').textContent = ''
+            document.querySelector('.error').style.display = 'none'
+            const fullname = document.getElementById('fullname').value
+            const phone = document.getElementById('phone').value
+            const province = document.getElementById('province').value
+            const city = document.getElementById('city').value
+            const school = document.getElementById('school').value
+            const school_class = document.getElementById('school_class').value
+            if (!fullname || !phone || !province || !city || !school || !school_class) {
+                document.querySelector('.error').textContent = 'Barcha maydonlarni to\'ldiring!'
+                document.querySelector('.error').style.display = 'block'
+                return
+            }
+            if (phone.length != 13 || !phone.startsWith('+998')) {
+                document.querySelector('.error').textContent = 'Telefon raqamda xatolik mavjud!'
+                document.querySelector('.error').style.display = 'block'
+                return
+            }
+            const data = {
+                fullname: fullname,
+                phone: phone,
+                province: province,
+                city: city,
+                school: school,
+                school_class: school_class
+            }
+            tg.sendData(JSON.stringify(data))
+            tg.close()
+        })
+    </script>
+
+</body>
+
+</html>
