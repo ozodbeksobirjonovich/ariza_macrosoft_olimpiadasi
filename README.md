@@ -1,0 +1,1 @@
+# ariza_macrosoft_olimpiadasi
